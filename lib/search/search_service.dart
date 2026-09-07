@@ -21,7 +21,7 @@ class SearchService {
     };
 
     final uri = Uri.https(
-      'frame-api.fly.dev',
+      'frameapi.app.runonflux.io',
       '/api/v1/search',
       queryParameters,
     );
@@ -46,7 +46,7 @@ class SearchService {
   }
 
   List<Content> _convertDataIntoModels(List<Map<String, dynamic>> jsonData) {
-    final converted = <Content>[];
+    final List<Content> converted = <Content>[];
 
     for (final content in jsonData) {
       final kind = content['kind'];
@@ -67,7 +67,7 @@ class SearchService {
     final queryParameters = {"id": id};
 
     final uri = Uri.https(
-      'frame-api.fly.dev',
+      'frameapi.app.runonflux.io',
       '/api/v1/search',
       queryParameters,
     );
@@ -92,14 +92,3 @@ class SearchService {
   }
 }
 
-void main() async {
-  SearchService searchService = SearchService();
-
-  print(
-    await searchService.searchByWord(
-      "query",
-      type: SearchType.playlist,
-      maxResults: 100,
-    ),
-  );
-}

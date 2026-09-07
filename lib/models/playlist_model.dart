@@ -1,3 +1,5 @@
+// ignore_for_file: override_on_non_overriding_member
+
 import "package:frame/models/content_model.dart";
 
 class Playlist implements Content {
@@ -21,6 +23,7 @@ class Playlist implements Content {
   late final String _contentType;
 
   @override
+  // ignore: override_on_non_overriding_member
   late final String _defaultThumbnail;
 
   @override
