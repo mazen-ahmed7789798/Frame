@@ -5,6 +5,8 @@ import 'package:frame/models/content_model.dart';
 import 'package:frame/search/search_service.dart';
 import 'package:frame/network/network_status_service.dart';
 
+enum ErrorType { noInternetError, generalError }
+
 class SearchProvider extends ChangeNotifier {
   final SearchService _searchService = SearchService();
   Content? idSearchResult;
@@ -12,6 +14,7 @@ class SearchProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   String? _lastQuery;
+  ErrorType? errorType;
   List<Content> get results => _results;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -35,6 +38,7 @@ class SearchProvider extends ChangeNotifier {
     try {
       if (!await hasInternet()) {
         _error = "No internet connection";
+        errorType = ErrorType.noInternetError;
         return;
       }
 
@@ -45,6 +49,7 @@ class SearchProvider extends ChangeNotifier {
       );
     } catch (e) {
       _error = e.toString();
+      errorType = ErrorType.generalError;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -54,18 +59,23 @@ class SearchProvider extends ChangeNotifier {
   Future<void> searchById(String id) async {
     _isLoading = true;
     _error = null;
+    idSearchResult = null;
 
     notifyListeners();
 
     try {
       if (!await hasInternet()) {
         _error = "No internet connection";
-        return null;
+        errorType = ErrorType.noInternetError;
+
+        return;
       }
 
       idSearchResult = await _searchService.searchById(id);
     } catch (e) {
       _error = e.toString();
+      errorType = ErrorType.generalError;
+
       idSearchResult = null;
     } finally {
       _isLoading = false;
@@ -75,7 +85,6 @@ class SearchProvider extends ChangeNotifier {
 }
 
 void main() async {
-  var searchProvider = SearchProvider();
-  await searchProvider.searchById("K_gzfizXXo0");
-  print(searchProvider.idSearchResult);
+  SearchProvider searchProvider = SearchProvider();
+  await searchProvider.searchById("id");
 }

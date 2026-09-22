@@ -23,6 +23,7 @@ class Playlist implements Content {
   late final String _contentType;
 
   @override
+  // ignore: duplicate_ignore
   // ignore: override_on_non_overriding_member
   late final String _defaultThumbnail;
 

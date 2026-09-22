@@ -21,7 +21,7 @@ class SearchService {
     };
 
     final uri = Uri.https(
-      'frameapi.app.runonflux.io',
+      'frameapi-production.up.railway.app',
       '/api/v1/search',
       queryParameters,
     );
@@ -67,7 +67,7 @@ class SearchService {
     final queryParameters = {"id": id};
 
     final uri = Uri.https(
-      'frameapi.app.runonflux.io',
+      'frameapi-production.up.railway.app',
       '/api/v1/search',
       queryParameters,
     );
@@ -79,8 +79,7 @@ class SearchService {
         "Search request failed with status ${response.statusCode}",
       );
     }
-
-    final decoded = jsonDecode(response.body);
+    final decoded = jsonDecode(response.body).first;
 
     final results = _convertDataIntoModels([decoded]);
 
@@ -91,4 +90,3 @@ class SearchService {
     return results.first;
   }
 }
-

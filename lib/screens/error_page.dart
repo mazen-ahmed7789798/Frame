@@ -1,21 +1,19 @@
 import "package:flutter/material.dart";
+import "package:frame/screens/general_error.dart";
+import "package:frame/screens/no_internet.dart";
+import "package:frame/search/search_provider.dart";
 
 class ErrorPage extends StatelessWidget {
-  final String errorMessage;
+  final ErrorType errorType;
 
-  const ErrorPage({super.key, required this.errorMessage});
+  const ErrorPage({super.key, required this.errorType});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Text(
-          errorMessage,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+    return Scaffold(
+      body: errorType ==  ErrorType.noInternetError
+          ? NoInternetScreen()
+          : GeneralErrorScreen(),
     );
   }
 }

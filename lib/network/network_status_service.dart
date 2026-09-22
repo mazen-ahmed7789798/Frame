@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
-/// جودة الاتصال بالإنترنت.
 enum NetworkQuality {
   excellent,
   good,
@@ -13,23 +13,11 @@ enum NetworkQuality {
   unknown,
 }
 
-/// تقرير كامل عن حالة الشبكة.
 class NetworkReport {
-  /// أنواع الاتصال الموجودة على الجهاز.
   final List<ConnectivityResult> connectionTypes;
-
-  /// هل توجد واجهة شبكة؟
   final bool hasNetwork;
-
-  /// هل الإنترنت متاح فعليًا؟
   final bool hasInternet;
-
-  /// زمن الاستجابة بالـ milliseconds.
-  ///
-  /// null إذا لم نستطع قياسه.
   final int? latency;
-
-  /// جودة الاتصال.
   final NetworkQuality quality;
 
   const NetworkReport({
@@ -64,14 +52,6 @@ class NetworkReport {
   }
 }
 
-/// Service واحدة مسؤولة عن فحص حالة الشبكة.
-///
-/// تشمل:
-/// - نوع الاتصال.
-/// - وجود Network Interface.
-/// - وجود Internet فعلي.
-/// - قياس Latency.
-/// - تقييم جودة الاتصال.
 class NetworkService {
   final Connectivity _connectivity;
   final InternetConnection _internetConnection;
@@ -83,12 +63,12 @@ class NetworkService {
         _internetConnection =
             internetConnection ?? InternetConnection();
 
-  /// الحصول على تقرير الشبكة الحالي.
   Future<NetworkReport> check() async {
     final connectionTypes =
         await _connectivity.checkConnectivity();
 
-    final hasNetwork = connectionTypes.isNotEmpty &&
+    final hasNetwork =
+        connectionTypes.isNotEmpty &&
         !connectionTypes.every(
           (result) => result == ConnectivityResult.none,
         );
@@ -117,17 +97,20 @@ class NetworkService {
     );
   }
 
-  /// مراقبة تغير حالة الاتصال.
   Stream<NetworkReport> get onNetworkChanged async* {
-    await for (final _ in _connectivity.onConnectivityChanged) {
+    // أول حالة عند تشغيل التطبيق.
+    yield await check();
+
+    final stream = StreamGroup.merge([
+      _connectivity.onConnectivityChanged,
+      _internetConnection.onStatusChange,
+    ]);
+
+    await for (final _ in stream) {
       yield await check();
     }
   }
 
-  /// قياس زمن الاستجابة.
-  ///
-  /// يتم إرسال عدة طلبات واستخدام متوسط النتائج
-  /// للحصول على قيمة أكثر استقرارًا.
   Future<int?> _measureLatency() async {
     const attempts = 3;
     final values = <int>[];
@@ -144,9 +127,7 @@ class NetworkService {
         if (hasInternet) {
           values.add(stopwatch.elapsedMilliseconds);
         }
-      } catch (_) {
-        // نتجاهل المحاولة الفاشلة.
-      }
+      } catch (_) {}
     }
 
     if (values.isEmpty) {
@@ -159,7 +140,6 @@ class NetworkService {
     return average.round();
   }
 
-  /// تحديد جودة الشبكة بناءً على حالة الإنترنت والـ latency.
   NetworkQuality _calculateQuality({
     required bool hasNetwork,
     required bool hasInternet,

@@ -1,30 +1,32 @@
 import "package:flutter/material.dart";
 import "package:frame/network/network_status_service.dart";
-import 'package:frame/screens/search_screen.dart';
+import 'package:frame/router/app_router.dart';
 import "package:google_fonts/google_fonts.dart";
 import 'package:provider/provider.dart';
 import 'package:frame/search/search_provider.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
-void main() async {
+void main() {
+  usePathUrlStrategy();
   runApp(
     ChangeNotifierProvider(create: (_) => SearchProvider(), child: MyApp()),
   );
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class MyApp extends StatelessWidget {
+  MyApp({super.key});
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
   final network = NetworkService();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       theme: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Color(0xff7ee7c6),
+          selectionColor: Color(0xff7ee7c6),
+          selectionHandleColor: Color(0xff7ee7c6),
+        ),
         scaffoldBackgroundColor: Color(0xFF0E131A),
         colorScheme: ColorScheme(
           primary: Color(0xFF7EE7C6),
@@ -40,7 +42,7 @@ class _MyAppState extends State<MyApp> {
         fontFamily: GoogleFonts.inter().fontFamily,
       ),
 
-      home: SearchScreen(),
+      routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
     );
   }
