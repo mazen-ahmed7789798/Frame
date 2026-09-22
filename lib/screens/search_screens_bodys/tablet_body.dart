@@ -112,21 +112,35 @@ class _TabletBodyState extends State<TabletBody> {
                 ),
                 SizedBox(height: 4),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
+                  runSpacing: 4,
                   children: [
                     const Text(
                       "Try:",
-                      style: TextStyle(color: Color(0xff646971)),
+                      style: TextStyle(
+                        color: Color(0xff646971),
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                    const SizedBox(width: 4),
-
-                    ListView.builder(
-                      itemCount: widget.suggestionButtons.length,
-                      itemBuilder: ((context, index) {
-                        return Container(child: widget.suggestionButtons.last);
-                      }),
-                    ),
+                    for (
+                      int index = 0;
+                      index < widget.suggestionButtons.length;
+                      index++
+                    ) ...[
+                      widget.suggestionButtons[index],
+                      if (index < widget.suggestionButtons.length - 1)
+                        const Text(
+                          ",",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                    ],
                   ],
                 ),
               ],

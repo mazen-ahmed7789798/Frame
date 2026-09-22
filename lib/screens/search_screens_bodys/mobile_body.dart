@@ -113,16 +113,35 @@ class _MobileBodyState extends State<MobileBody> {
                 ),
                 SizedBox(height: 12),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
+                  runSpacing: 4,
                   children: [
                     const Text(
                       "Try:",
-                      style: TextStyle(color: Color(0xff646971)),
+                      style: TextStyle(
+                        color: Color(0xff646971),
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                    const SizedBox(width: 4),
-
-                    for (final x in widget.suggestions) x,
+                    for (
+                      int index = 0;
+                      index < widget.suggestions.length;
+                      index++
+                    ) ...[
+                      widget.suggestions[index],
+                      if (index < widget.suggestions.length - 1)
+                        const Text(
+                          ",",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                    ],
                   ],
                 ),
               ],
