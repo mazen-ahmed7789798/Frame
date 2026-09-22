@@ -7,6 +7,7 @@ class PlaylistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("playerList: ${playlist.channelTitle}");
     return const Placeholder();
   }
 }

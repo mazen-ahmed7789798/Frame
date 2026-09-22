@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors_in_immutables
+
 import 'package:flutter/material.dart';
 import 'package:frame/search/search_provider.dart';
 import 'package:frame/widgets/search_bar.dart';
@@ -7,7 +9,7 @@ import 'package:provider/provider.dart';
 
 class DesktopBody extends StatefulWidget {
   final TextEditingController controller;
-  final List<String> suggestions;
+  final List<SuggestionButton> suggestions;
   DesktopBody({super.key, required this.controller, required this.suggestions});
 
   @override
@@ -119,29 +121,35 @@ class _DesktopBodyState extends State<DesktopBody> {
                 ),
                 SizedBox(height: 4),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
+                  runSpacing: 4,
                   children: [
                     const Text(
                       "Try:",
-                      style: TextStyle(color: Color(0xff646971)),
-                    ),
-                    const SizedBox(width: 4),
-
-                    for (final x in widget.suggestions)
-                      SuggestionButton(
-                        onPressed: () {
-                          widget.controller.text = x;
-                          widget.controller.selection = TextSelection.collapsed(
-                            offset: widget.controller.text.length,
-                          );
-
-                          setState(() {
-                            isHidden = false;
-                          });
-                        },
-                        suggestionText: x,
+                      style: TextStyle(
+                        color: Color(0xff646971),
+                        fontWeight: FontWeight.w700,
                       ),
+                    ),
+                    for (
+                      int index = 0;
+                      index < widget.suggestions.length;
+                      index++
+                    ) ...[
+                      widget.suggestions[index],
+                      if (index < widget.suggestions.length - 1)
+                        const Text(
+                          ",",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                    ],
                   ],
                 ),
               ],

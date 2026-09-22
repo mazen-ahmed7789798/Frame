@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frame/screens/search_screens_bodys/desktop_body.dart';
 import 'package:frame/screens/search_screens_bodys/mobile_body.dart';
 import 'package:frame/screens/search_screens_bodys/tablet_body.dart';
+import 'package:frame/widgets/suggestion_button.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -14,7 +15,19 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late final TextEditingController _controller;
-  final suggestions = ["Focus", "Deep Work", "Motivation"];
+  List<String> _suggestionsText = ["Focus", "Deep Work", "Motivation"];
+  List<SuggestionButton> get suggestionButtons {
+    List<SuggestionButton> buttons = [];
+    for (String x in _suggestionsText) {
+      buttons.add(
+        SuggestionButton(
+          suggestionText: x,
+          controller: _controller,
+        ),
+      );
+    }
+    return buttons;
+  }
 
   @override
   void initState() {
@@ -24,7 +37,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("KK");
     return LayoutBuilder(
       builder: (context, constraints) {
         // Mobile حقيقي
@@ -32,28 +44,38 @@ class _SearchScreenState extends State<SearchScreen> {
           final shortestSide = MediaQuery.sizeOf(context).shortestSide;
 
           if (shortestSide < 600) {
-            print("Mobile");
+            debugPrint("Mobile");
             return MobileBody(
               controller: _controller,
-              suggestions: suggestions,
+              suggestions: suggestionButtons,
             );
           }
         }
 
         // Web + الأجهزة الأكبر
         if (constraints.maxWidth < 600) {
-          print("Mobile");
+          debugPrint("Mobile");
 
-          return MobileBody(controller: _controller, suggestions: suggestions);
+          return MobileBody(
+            controller: _controller,
+            suggestions: suggestionButtons,
+          );
         }
 
         if (constraints.maxWidth < 1024) {
-          print("tablet");
-          return TabletBody(controller: _controller, suggestions: suggestions);
-        }
-        print("Desktop");
+          debugPrint("tablet");
 
-        return DesktopBody(controller: _controller, suggestions: suggestions);
+          return TabletBody(
+            controller: _controller,
+            suggestionButtons: suggestionButtons,
+          );
+        }
+        debugPrint("desktop");
+
+        return DesktopBody(
+          controller: _controller,
+          suggestions: suggestionButtons,
+        );
       },
     );
   }

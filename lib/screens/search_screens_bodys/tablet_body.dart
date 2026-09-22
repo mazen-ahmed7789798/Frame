@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:frame/search/search_provider.dart';
 import 'package:frame/widgets/search_bar.dart';
+import 'package:frame/widgets/suggestion_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class TabletBody extends StatefulWidget {
   final TextEditingController controller;
-  final List<String> suggestions;
-  TabletBody({super.key, required this.controller,required this.suggestions});
+  final List<SuggestionButton> suggestionButtons;
+  TabletBody({
+    super.key,
+    required this.controller,
+    required this.suggestionButtons,
+  });
 
   @override
   State<TabletBody> createState() => _TabletBodyState();
 }
 
 class _TabletBodyState extends State<TabletBody> {
-
   bool isHidden = true;
 
   @override
@@ -117,23 +121,12 @@ class _TabletBodyState extends State<TabletBody> {
                     ),
                     const SizedBox(width: 4),
 
-                    for (final x in widget.suggestions)
-                      GestureDetector(
-                        onTap: () {
-                          widget.controller.text = x;
-                          widget.controller.selection = TextSelection.collapsed(
-                            offset: widget.controller.text.length,
-                          );
-
-                          setState(() {
-                            isHidden = false;
-                          });
-                        },
-                        child: Text(
-                          widget.suggestions.last != x ? "$x," : x,
-                          style: TextStyle(color: primary),
-                        ),
-                      ),
+                    ListView.builder(
+                      itemCount: widget.suggestionButtons.length,
+                      itemBuilder: ((context, index) {
+                        return Container(child: widget.suggestionButtons.last);
+                      }),
+                    ),
                   ],
                 ),
               ],

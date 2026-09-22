@@ -8,23 +8,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:frame/main.dart';
+import 'package:frame/screens/search_screens_bodys/desktop_body.dart';
+import 'package:frame/widgets/suggestion_button.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+  testWidgets('desktop suggestions render next to Try and use grey commas', (
+    WidgetTester tester,
+  ) async {
+    final controller = TextEditingController();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DesktopBody(
+          controller: controller,
+          suggestions: [
+            SuggestionButton(suggestionText: 'Focus', controller: controller),
+            SuggestionButton(
+              suggestionText: 'Deep Work',
+              controller: controller,
+            ),
+            SuggestionButton(
+              suggestionText: 'Motivation',
+              controller: controller,
+            ),
+          ],
+        ),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Try:'), findsOneWidget);
+    expect(find.text('Focus'), findsOneWidget);
+    expect(find.text('Deep Work'), findsOneWidget);
+    expect(find.text('Motivation'), findsOneWidget);
+    expect(find.text(','), findsNWidgets(2));
   });
 }

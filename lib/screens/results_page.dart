@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart';
 import 'package:frame/models/video_model.dart';
@@ -20,7 +22,6 @@ class ResultsPage extends StatefulWidget {
 
 class _ResultsPageState extends State<ResultsPage> {
   late int _currentPage = widget.initialPage;
-  int get currentPage => _currentPage;
   set currentPage(int currentPage) {
     _currentPage = currentPage;
   }
