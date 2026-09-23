@@ -3,18 +3,22 @@
 import "package:flutter/material.dart";
 import 'package:flutter/foundation.dart';
 import 'package:frame/models/video_model.dart';
-import 'package:frame/screens/results_screens_bodys/desktop_body.dart';
-import 'package:frame/screens/results_screens_bodys/mobile_body.dart';
-import 'package:frame/screens/results_screens_bodys/tablet_body.dart';
-import 'package:frame/screens/search_results_pages.dart';
+import 'package:frame/Pages/results_screens_bodys/desktop_body.dart';
+import 'package:frame/Pages/results_screens_bodys/mobile_body.dart';
+import 'package:frame/Pages/results_screens_bodys/tablet_body.dart';
+import 'package:frame/Pages/search_results_pages.dart';
 import 'package:frame/search/search_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ResultsPage extends StatefulWidget {
   final int initialPage;
-
-  const ResultsPage({super.key, this.initialPage = 0});
+  final String searchWord;
+  const ResultsPage({
+    super.key,
+    this.initialPage = 0,
+    required this.searchWord,
+  });
 
   @override
   State<ResultsPage> createState() => _ResultsPageState();
@@ -24,6 +28,19 @@ class _ResultsPageState extends State<ResultsPage> {
   late int _currentPage = widget.initialPage;
   set currentPage(int currentPage) {
     _currentPage = currentPage;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || widget.searchWord.isEmpty) return;
+      if (widget.searchWord.isNotEmpty) {
+        context.read<SearchProvider>().searchByWord(widget.searchWord);
+      } else {
+        context.goNamed("/");
+      }
+    });
   }
 
   @override
@@ -64,13 +81,28 @@ class _ResultsPageState extends State<ResultsPage> {
       color: const Color(0xFF7EE7C6),
       title: "Frame - Resutls",
       child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: primary,
-          leading: IconButton(
-            onPressed: () {
-              context.goNamed("home");
-            },
-            icon: const Icon(Icons.arrow_back),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(64),
+          child: Container(
+            decoration: BoxDecoration(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 8,
+              ),
+              child: AppBar(
+                foregroundColor: primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
+                ),
+                leading: IconButton(
+                  onPressed: () {
+                    context.goNamed("home");
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                ),
+              ),
+            ),
           ),
         ),
         body: LayoutBuilder(

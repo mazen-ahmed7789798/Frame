@@ -18,7 +18,7 @@ class MobileVideoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.goNamed("watch", pathParameters: {"id": video.videoId});
+        context.goNamed("watch", queryParameters: {"id": video.videoId});
       },
       borderRadius: BorderRadius.circular(12),
       child: Container(
@@ -93,8 +93,14 @@ class MobileVideoCard extends StatelessWidget {
 
                   const SizedBox(height: 2),
 
-                  Text(
-                    formatDate(video.publishedAt),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: formatDate(video.publishedAt)),
+                        const TextSpan(text: " \u2022 "),
+                        TextSpan(text: video.publishedWhileAgo),
+                      ],
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(

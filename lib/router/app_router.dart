@@ -1,8 +1,8 @@
 import "package:go_router/go_router.dart";
 import 'package:flutter/material.dart';
-import "package:frame/screens/search_screen.dart";
-import "package:frame/screens/results_page.dart";
-import "package:frame/screens/video_player.dart";
+import "package:frame/Pages/search_screen.dart";
+import "package:frame/Pages/results_page.dart";
+import "package:frame/Pages/video_player.dart";
 
 final GoRouter appRouter = GoRouter(
   routes: [
@@ -24,22 +24,27 @@ final GoRouter appRouter = GoRouter(
           state.uri.queryParameters["page"] ?? "1",
         );
 
+        final queryParameter = state.uri.queryParameters["q"] ?? "";
+
         final initialPage = ((pageParameter ?? 1) - 1)
             .clamp(0, 1 << 30)
             .toInt();
 
         return Title(
           color: const Color(0xFF7EE7C6),
-          child: ResultsPage(initialPage: initialPage),
+          child: ResultsPage(
+            initialPage: initialPage,
+            searchWord: queryParameter,
+          ),
         );
       },
     ),
 
     GoRoute(
-      path: "/watch/:id",
+      path: "/watch",
       name: "watch",
       builder: (context, state) {
-        final id = state.pathParameters["id"]!;
+        final id = state.uri.queryParameters["id"]!;
 
         return VideoPlayer(videoId: id);
       },

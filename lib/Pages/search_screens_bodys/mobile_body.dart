@@ -33,7 +33,6 @@ class _MobileBodyState extends State<MobileBody> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<SearchProvider>();
     final Color primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
@@ -101,10 +100,9 @@ class _MobileBodyState extends State<MobileBody> {
                     height: 46,
                     child: MySearchBar(
                       onSearch: (query) {
-                        provider.searchByWord(query);
-                        context.pushNamed(
+                        context.goNamed(
                           "results",
-                          queryParameters: {"page": "1"},
+                          queryParameters: {"q": query},
                         );
                       },
                       controller: widget._controller,

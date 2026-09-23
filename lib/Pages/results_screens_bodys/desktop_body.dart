@@ -1,55 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:frame/models/video_model.dart';
-import 'package:frame/screens/search_results_pages.dart';
+import 'package:frame/Pages/error_page.dart';
+import 'package:frame/Pages/search_results_pages.dart';
 import 'package:frame/search/search_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:frame/screens/error_page.dart';
 import 'package:frame/widgets/navigation_button.dart';
 
-class MobileBody extends StatelessWidget {
+class DesktopBody extends StatelessWidget {
   final int currentPage;
   final ValueChanged<int> onPageChanged;
+  final int? pagesCount;
+  final bool isLoading;
+  final String? error;
+  final int? resultsLength;
+  final String lastQuery;
+  final List<SearchResultsPages> pages;
   final ErrorType? errorType;
-  const MobileBody({
+  const DesktopBody({
     super.key,
     required this.currentPage,
     required this.onPageChanged,
+    required this.pagesCount,
+    required this.isLoading,
+    required this.error,
+    required this.lastQuery,
+    required this.resultsLength,
+    required this.pages,
     required this.errorType,
   });
 
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
-    final provider = context.watch<SearchProvider>();
 
-    final results = provider.results;
-    final resultsLength = results.length;
-    final query = provider.lastQuery;
-
-    final List<Video> videos = provider.results.whereType<Video>().toList();
-
-    const int pageSize = 2;
-
-    final int pagesCount = (videos.length / pageSize).ceil();
-
-    final List<SearchResultsPages> pages = [];
-
-    for (int pageIndex = 0; pageIndex < pagesCount; pageIndex++) {
-      final int start = pageIndex * pageSize;
-      final int end = (start + pageSize).clamp(0, videos.length);
-
-      pages.add(SearchResultsPages(videos.sublist(start, end)));
-    }
-
-    final safeCurrentPage = pagesCount == 0
+    final safePagesCount = pagesCount ?? 0;
+    final safeCurrentPage = safePagesCount == 0
         ? 0
-        : currentPage.clamp(0, pagesCount - 1);
+        : currentPage.clamp(0, safePagesCount - 1);
 
     return Scaffold(
-      backgroundColor: Color(0xff0B0F13),
-      body: provider.isLoading
+      backgroundColor: const Color(0xff0B0F13),
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : provider.error != null && provider.error!.isNotEmpty
+          : error != null && error!.isNotEmpty
           ? ErrorPage(errorType: errorType!)
           : Padding(
               padding: const EdgeInsets.symmetric(
@@ -64,20 +55,31 @@ class MobileBody extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6.0),
                         child: Text(
-                          '$resultsLength results for',
+                          '${resultsLength ?? 0} results for',
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ),
-                      Text('"$query"', style: TextStyle(color: primary)),
+                      Text('"$lastQuery"', style: TextStyle(color: primary)),
                     ],
                   ),
-                  SizedBox(height: 4),
                   Expanded(
-                    child: pages.isEmpty
-                        ? const SizedBox()
-                        : pages[safeCurrentPage],
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: pages.isEmpty
+                              ? const SizedBox()
+                              : pages[safeCurrentPage],
+                        ),
+                      ),
+                    ),
                   ),
-                  if (pagesCount > 0)
+                  if (safePagesCount > 0)
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -86,27 +88,24 @@ class MobileBody extends StatelessWidget {
                           NavigationArrowButton(
                             icon: Icons.chevron_left,
                             tooltip: 'Previous page',
-                            compact: true,
                             onPressed: safeCurrentPage > 0
                                 ? () => onPageChanged(safeCurrentPage - 1)
                                 : null,
                           ),
                           for (
                             int pageIndex = 0;
-                            pageIndex < pagesCount;
+                            pageIndex < safePagesCount;
                             pageIndex++
                           )
                             NavigationButton(
                               index: pageIndex,
                               currentPage: safeCurrentPage,
-                              compact: true,
                               onPressed: () => onPageChanged(pageIndex),
                             ),
                           NavigationArrowButton(
                             icon: Icons.chevron_right,
                             tooltip: 'Next page',
-                            compact: true,
-                            onPressed: safeCurrentPage < pagesCount - 1
+                            onPressed: safeCurrentPage < safePagesCount - 1
                                 ? () => onPageChanged(safeCurrentPage + 1)
                                 : null,
                           ),

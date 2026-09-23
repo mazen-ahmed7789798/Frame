@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:frame/screens/search_screens_bodys/desktop_body.dart';
+import 'package:frame/pages/search_screens_bodys/desktop_body.dart';
 import 'package:frame/widgets/suggestion_button.dart';
 
 void main() {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frame/models/video_model.dart';
-import 'package:frame/screens/error_page.dart';
+import 'package:frame/Pages/error_page.dart';
 import 'package:frame/search/search_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +27,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
       params: YoutubePlayerParams(
         strictRelatedVideos: false,
         showVideoAnnotations: false,
+        showFullscreenButton: true,
         color: "green",
       ),
     );
@@ -45,40 +46,59 @@ class _VideoPlayerState extends State<VideoPlayer> {
     final Video? selectedVideo = provider.idSearchResult is Video
         ? provider.idSearchResult as Video
         : null;
-
+    if (selectedVideo != null) {
+      print(selectedVideo.publishedWhileAgo);
+    }
     return Title(
       title: "Frame - ${selectedVideo?.videoTitle ?? "Video"}",
       color: const Color(0xFF7EE7C6),
 
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              context.go("/results");
-            },
-            icon: const Icon(Icons.arrow_back),
-          ),
-          foregroundColor: primary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.only(
-              bottomRight: Radius.circular(20),
-              bottomLeft: Radius.circular(20),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(64),
+
+          child: Container(
+            decoration: BoxDecoration(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 8,
+              ),
+              child: AppBar(
+                leading: IconButton(
+                  onPressed: () {
+                    if (provider.results.isEmpty) {
+                      context.goNamed("/");
+                    }
+                    context.goNamed("results");
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  tooltip: "Go to Search Page",
+                ),
+                foregroundColor: primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
+                ),
+                centerTitle: true,
+                title: currentWidth < 600
+                    ? selectedVideo != null
+                          ? Text(
+                              selectedVideo.videoTitle,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null
+                    : null,
+              ),
             ),
           ),
-          centerTitle: true,
-          title: currentWidth < 600
-              ? selectedVideo != null
-                    ? Text(
-                        selectedVideo.videoTitle,
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      )
-                    : null
-              : null,
         ),
         body: provider.isLoading
             ? Center(child: CircularProgressIndicator())
             : provider.error != null
-            ? ErrorPage(errorType: provider.errorType!)
+            ? ErrorPage(errorType: provider.errorType!, error: provider.error!)
             : selectedVideo == null
             ? const Center(child: Text("Video not found"))
             : LayoutBuilder(

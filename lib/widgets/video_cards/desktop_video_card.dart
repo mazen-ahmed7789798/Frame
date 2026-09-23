@@ -19,7 +19,7 @@ class DesktopVideoCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        context.goNamed("watch", pathParameters: {"id": video.videoId});
+        context.goNamed("watch", queryParameters: {"id": video.videoId});
       },
       borderRadius: BorderRadius.circular(8),
 
@@ -122,8 +122,14 @@ class DesktopVideoCard extends StatelessWidget {
                     const Spacer(flex: 5),
 
                     // Published date
-                    Text(
-                      formatDate(video.publishedAt),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: formatDate(video.publishedAt)),
+                          const TextSpan(text: " \u2022 "),
+                          TextSpan(text: video.publishedWhileAgo),
+                        ],
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frame/screens/error_page.dart';
-import 'package:frame/screens/search_results_pages.dart';
+import 'package:frame/Pages/error_page.dart';
+import 'package:frame/Pages/search_results_pages.dart';
 import 'package:frame/search/search_provider.dart';
 import 'package:frame/widgets/navigation_button.dart';
 
-class DesktopBody extends StatelessWidget {
+class TabletBody extends StatelessWidget {
   final int currentPage;
   final ValueChanged<int> onPageChanged;
   final int? pagesCount;
@@ -14,7 +14,7 @@ class DesktopBody extends StatelessWidget {
   final String lastQuery;
   final List<SearchResultsPages> pages;
   final ErrorType? errorType;
-  const DesktopBody({
+  const TabletBody({
     super.key,
     required this.currentPage,
     required this.onPageChanged,

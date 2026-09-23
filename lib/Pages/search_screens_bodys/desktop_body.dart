@@ -41,7 +41,6 @@ class _DesktopBodyState extends State<DesktopBody> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<SearchProvider>();
     final Color primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
@@ -110,10 +109,9 @@ class _DesktopBodyState extends State<DesktopBody> {
                     child: MySearchBar(
                       controller: widget.controller,
                       onSearch: (query) {
-                        provider.searchByWord(query);
-                        context.pushNamed(
+                        context.goNamed(
                           "results",
-                          queryParameters: {"page": "1"},
+                          queryParameters: {"q": query},
                         );
                       },
                     ),

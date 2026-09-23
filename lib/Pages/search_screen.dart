@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:frame/screens/search_screens_bodys/desktop_body.dart';
-import 'package:frame/screens/search_screens_bodys/mobile_body.dart';
-import 'package:frame/screens/search_screens_bodys/tablet_body.dart';
+import 'package:frame/Pages/search_screens_bodys/desktop_body.dart';
+import 'package:frame/Pages/search_screens_bodys/mobile_body.dart';
+import 'package:frame/Pages/search_screens_bodys/tablet_body.dart';
 import 'package:frame/widgets/suggestion_button.dart';
 
 class SearchScreen extends StatefulWidget {

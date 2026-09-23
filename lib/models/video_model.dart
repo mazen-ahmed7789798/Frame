@@ -130,4 +130,27 @@ class Video implements Content {
   String get highThumbnail => _highThumbnail;
 
   DateTime get publishedAt => _publishedAt;
+
+  String get publishedWhileAgo {
+    final difference = DateTime.now().difference(_publishedAt);
+    final minutes = difference.inMinutes;
+    final hours = difference.inHours;
+    final days = difference.inDays;
+
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return "${minutes} minute${minutes == 1 ? "" : "s"} ago";
+    if (hours < 24) return "${hours} hour${hours == 1 ? "" : "s"} ago";
+    if (days < 7) return "${days} day${days == 1 ? "" : "s"} ago";
+    if (days < 30) {
+      final weeks = days ~/ 7;
+      return "${weeks} week${weeks == 1 ? "" : "s"} ago";
+    }
+    if (days < 365) {
+      final months = days ~/ 30;
+      return "${months} month${months == 1 ? "" : "s"} ago";
+    }
+
+    final years = days ~/ 365;
+    return "${years} year${years == 1 ? "" : "s"} ago";
+  }
 }
