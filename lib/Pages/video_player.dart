@@ -46,9 +46,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
     final Video? selectedVideo = provider.idSearchResult is Video
         ? provider.idSearchResult as Video
         : null;
-    if (selectedVideo != null) {
-      print(selectedVideo.publishedWhileAgo);
-    }
+
     return Title(
       title: "Frame - ${selectedVideo?.videoTitle ?? "Video"}",
       color: const Color(0xFF7EE7C6),
@@ -65,15 +63,15 @@ class _VideoPlayerState extends State<VideoPlayer> {
                 vertical: 8,
               ),
               child: AppBar(
-                leading: IconButton(
-                  onPressed: () {
-                    if (provider.results.isEmpty) {
-                      context.goNamed("/");
-                    }
-                    context.goNamed("results");
-                  },
-                  icon: const Icon(Icons.arrow_back),
-                  tooltip: "Go to Search Page",
+                leading: Visibility(
+                  visible: !context.canPop(),
+                  child: IconButton(
+                    onPressed: () {
+                      context.go('/');
+                    },
+                    icon: const Icon(Icons.arrow_back),
+                    tooltip: "Go to Search Page",
+                  ),
                 ),
                 foregroundColor: primary,
                 shape: RoundedRectangleBorder(

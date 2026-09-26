@@ -42,6 +42,7 @@ class _GeneralErrorScreenState extends State<GeneralErrorScreen>
             ).animate(_animationController),
             child: Image.asset("images/warning.png", width: 180, height: 180),
           ),
+          Text("${widget.errorMesage}"),
         ],
       ),
     );

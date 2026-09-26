@@ -58,19 +58,19 @@ class _TabletBodyState extends State<TabletBody> {
                 Text.rich(
                   TextSpan(
                     children: [
-                      const TextSpan(
+                      TextSpan(
                         text: "No ",
                         style: TextStyle(
                           fontSize: 40,
                           fontWeight: FontWeight.w600,
+                          color: primary,
                         ),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: "Distractions",
                         style: TextStyle(
                           fontSize: 40,
                           fontWeight: FontWeight.w700,
-                          color: primary,
                         ),
                       ),
                     ],
@@ -90,7 +90,7 @@ class _TabletBodyState extends State<TabletBody> {
                     ),
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 // Search bar
                 Padding(
                   padding: const EdgeInsets.all(8.0),

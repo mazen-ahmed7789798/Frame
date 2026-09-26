@@ -66,11 +66,12 @@ class _DesktopBodyState extends State<DesktopBody> {
                 Text.rich(
                   TextSpan(
                     children: [
-                      const TextSpan(
+                      TextSpan(
                         text: "No ",
                         style: TextStyle(
                           fontSize: 52,
                           fontWeight: FontWeight.w600,
+                          color: primary,
                         ),
                       ),
                       TextSpan(
@@ -78,7 +79,6 @@ class _DesktopBodyState extends State<DesktopBody> {
                         style: TextStyle(
                           fontSize: 52,
                           fontWeight: FontWeight.w700,
-                          color: primary,
                         ),
                       ),
                     ],

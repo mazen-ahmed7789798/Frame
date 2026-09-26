@@ -44,7 +44,6 @@ class _SearchScreenState extends State<SearchScreen> {
           final shortestSide = MediaQuery.sizeOf(context).shortestSide;
 
           if (shortestSide < 600) {
-            debugPrint("Mobile");
             return MobileBody(
               controller: _controller,
               suggestions: suggestionButtons,
@@ -54,7 +53,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
         // Web + الأجهزة الأكبر
         if (constraints.maxWidth < 600) {
-          debugPrint("Mobile");
 
           return MobileBody(
             controller: _controller,
@@ -63,14 +61,12 @@ class _SearchScreenState extends State<SearchScreen> {
         }
 
         if (constraints.maxWidth < 1024) {
-          debugPrint("tablet");
 
           return TabletBody(
             controller: _controller,
             suggestionButtons: suggestionButtons,
           );
         }
-        debugPrint("desktop");
 
         return DesktopBody(
           controller: _controller,

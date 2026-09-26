@@ -7,7 +7,6 @@ class ChannelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("playerList: ${channel.channelTitle}");
 
     return const Placeholder();
   }

@@ -79,7 +79,7 @@ class SearchService {
         "Search request failed with status ${response.statusCode}",
       );
     }
-    final decoded = jsonDecode(response.body).first;
+    final decoded = jsonDecode(response.body);
 
     final results = _convertDataIntoModels([decoded]);
 

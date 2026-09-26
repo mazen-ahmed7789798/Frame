@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:frame/network/network_provider.dart';
 import "package:frame/network/network_status_service.dart";
 import 'package:frame/router/app_router.dart';
 import "package:google_fonts/google_fonts.dart";
@@ -9,7 +10,15 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 void main() {
   usePathUrlStrategy();
   runApp(
-    ChangeNotifierProvider(create: (_) => SearchProvider(), child: MyApp()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
+        ChangeNotifierProvider(
+          create: (_) => NetworkProvider(NetworkService()),
+        ),
+      ],
+      child: MyApp(),
+    ),
   );
 }
 
@@ -39,9 +48,8 @@ class MyApp extends StatelessWidget {
           onError: Colors.black,
           onSurface: Color(0xFFE6ECEF),
         ),
-        fontFamily: GoogleFonts.inter().fontFamily,
+        fontFamily: GoogleFonts.ibmPlexSansArabic().fontFamily,
       ),
-
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
     );
