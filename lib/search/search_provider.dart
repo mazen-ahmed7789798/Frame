@@ -79,6 +79,9 @@ class SearchProvider extends ChangeNotifier {
     }
     try {
       idSearchResult = await _searchService.searchById(id);
+      print('ID: $id');
+      print('RESULT: $idSearchResult');
+      print('TYPE: ${idSearchResult.runtimeType}');
     } catch (e) {
       _error = e.toString();
       _errorType = ErrorType.generalError;

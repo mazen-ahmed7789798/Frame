@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frame/search/search_provider.dart';
 import 'package:frame/widgets/search_bar.dart';
 import 'package:frame/widgets/suggestion_button.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class TabletBody extends StatefulWidget {
   final TextEditingController controller;

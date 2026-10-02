@@ -15,7 +15,6 @@ class _GeneralErrorScreenState extends State<GeneralErrorScreen>
   @override
   void initState() {
     super.initState();
-    print(widget.errorMesage);
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 20),

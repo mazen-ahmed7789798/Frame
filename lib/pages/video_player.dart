@@ -1,0 +1,168 @@
+import 'package:flutter/material.dart';
+import 'package:frame/models/video_model.dart';
+import 'package:frame/pages/error_page.dart';
+import 'package:frame/network/network_provider.dart';
+import 'package:frame/search/search_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+
+class VideoPlayer extends StatefulWidget {
+  final String videoId;
+
+  const VideoPlayer({super.key, required this.videoId});
+
+  @override
+  State<VideoPlayer> createState() => _VideoPlayerState();
+}
+
+class _VideoPlayerState extends State<VideoPlayer> {
+  late final YoutubePlayerController youtubePlayerController;
+  late final YoutubePlayer youtubePlayer;
+  @override
+  void initState() {
+    super.initState();
+    youtubePlayerController = YoutubePlayerController.fromVideoId(
+      videoId: widget.videoId,
+      autoPlay: true,
+      params: YoutubePlayerParams(
+        strictRelatedVideos: false,
+        showVideoAnnotations: false,
+        showFullscreenButton: true,
+        color: "green",
+      ),
+    );
+    youtubePlayer = YoutubePlayer(controller: youtubePlayerController);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (context.read<NetworkProvider>().hasInternet == true) {
+        context.read<SearchProvider>().searchById(widget.videoId);
+      } else {
+        ErrorPage(errorType: ErrorType.noInternetError);
+      }
+    });
+  }
+
+  onError(selectedVideo) {
+    print(selectedVideo.videoStatus);
+    return Center(
+      child: Text(
+        "Video not found",
+        style: TextStyle(fontSize: 18, color: Colors.white),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Color primary = Theme.of(context).colorScheme.primary;
+    double currentWidth = MediaQuery.sizeOf(context).width;
+    final provider = context.watch<SearchProvider>();
+    print('provider loading: ${provider.isLoading}');
+    print('provider error: ${provider.error}');
+    print('idSearchResult: ${provider.idSearchResult}');
+    print('is Video: ${provider.idSearchResult is Video}');
+    final Video? selectedVideo = provider.idSearchResult is Video
+        ? provider.idSearchResult as Video
+        : null;
+
+    return Title(
+      title: "Frame - ${selectedVideo?.videoTitle ?? "Video"}",
+      color: const Color(0xFF7EE7C6),
+
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(64),
+
+          child: Container(
+            decoration: BoxDecoration(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 8,
+              ),
+              child: AppBar(
+                leading: Visibility(
+                  visible: !context.canPop(),
+                  child: IconButton(
+                    onPressed: () {
+                      context.go('/');
+                    },
+                    icon: const Icon(Icons.arrow_back),
+                    tooltip: "Go to Search Page",
+                  ),
+                ),
+                foregroundColor: primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
+                ),
+                centerTitle: true,
+                title: currentWidth < 600
+                    ? selectedVideo != null
+                          ? Text(
+                              selectedVideo.videoTitle,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null
+                    : null,
+              ),
+            ),
+          ),
+        ),
+        body: provider.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : provider.error != null
+            ? ErrorPage(errorType: provider.errorType!, error: provider.error!)
+            : selectedVideo == null
+            ? onError(selectedVideo)
+            : LayoutBuilder(
+                builder: (context, constraints) {
+                  print(selectedVideo.videoStatus);
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          currentWidth > 600 ? selectedVideo.videoTitle : "",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 960,
+                                ),
+                                child: AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: youtubePlayer,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+      ),
+    );
+  }
+}

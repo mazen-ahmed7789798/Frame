@@ -86,6 +86,15 @@ class Video implements Content {
   }
 
   factory Video.fromJson(Map<String, dynamic> json) {
+    final status = json["videoStatus"];
+    final videoStatus = status == null
+        ? VideoStatus.notStarted
+        : VideoStatus.values.firstWhere(
+            (value) => value.toString() == status,
+            orElse: () =>
+                throw FormatException("Unknown video status: $status"),
+          );
+
     return Video(
       json["channelTitle"],
       json["id"],
@@ -103,7 +112,7 @@ class Video implements Content {
       json["highThumbnailHeight"],
       json["highThumbnailWidth"],
       DateTime.parse(json["publishedAt"]),
-      VideoStatus.values.firstWhere((e) => e.toString() == json["videoStatus"]),
+      videoStatus ?? VideoStatus.notStarted,
     );
   }
 

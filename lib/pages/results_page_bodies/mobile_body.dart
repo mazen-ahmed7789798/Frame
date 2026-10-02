@@ -50,7 +50,7 @@ class MobileBody extends StatelessWidget {
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : provider.error != null && provider.error!.isNotEmpty
-          ? ErrorPage(errorType: errorType!)
+          ? ErrorPage(errorType: errorType!, error: provider.error)
           : Padding(
               padding: const EdgeInsets.symmetric(
                 vertical: 12.0,

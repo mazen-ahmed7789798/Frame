@@ -41,7 +41,7 @@ class TabletBody extends StatelessWidget {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : error != null && error!.isNotEmpty
-          ? ErrorPage(errorType: errorType!)
+          ? ErrorPage(errorType: errorType!, error: error)
           : Padding(
               padding: const EdgeInsets.symmetric(
                 vertical: 12.0,
