@@ -2,10 +2,13 @@
 
 import 'package:frame/models/content_model.dart';
 
+enum VideoStatus { notStarted, paused, playing, finished }
+
 class Video implements Content {
   late dynamic _vidoeDuration;
 
   late String _description;
+  late VideoStatus _videoStatus = VideoStatus.notStarted;
 
   late int _defaultThumbnailwidth;
   late int _defaultThumbnailHeight;
@@ -56,6 +59,7 @@ class Video implements Content {
     this._highThumbnailHeight,
     this._highThumbnailWidth,
     this._publishedAt,
+    this._videoStatus,
   );
 
   @override
@@ -77,6 +81,7 @@ class Video implements Content {
       "defaultThumbnailHeight": _defaultThumbnailHeight,
       "defaultThumbnailWidth": _defaultThumbnailwidth,
       "description": _description,
+      "videoStatus": _videoStatus.toString(),
     };
   }
 
@@ -98,6 +103,7 @@ class Video implements Content {
       json["highThumbnailHeight"],
       json["highThumbnailWidth"],
       DateTime.parse(json["publishedAt"]),
+      VideoStatus.values.firstWhere((e) => e.toString() == json["videoStatus"]),
     );
   }
 
@@ -138,19 +144,21 @@ class Video implements Content {
     final days = difference.inDays;
 
     if (minutes < 1) return "Just now";
-    if (minutes < 60) return "${minutes} minute${minutes == 1 ? "" : "s"} ago";
-    if (hours < 24) return "${hours} hour${hours == 1 ? "" : "s"} ago";
-    if (days < 7) return "${days} day${days == 1 ? "" : "s"} ago";
+    if (minutes < 60) return "$minutes minute${minutes == 1 ? "" : "s"} ago";
+    if (hours < 24) return "$hours hour${hours == 1 ? "" : "s"} ago";
+    if (days < 7) return "$days day${days == 1 ? "" : "s"} ago";
     if (days < 30) {
       final weeks = days ~/ 7;
-      return "${weeks} week${weeks == 1 ? "" : "s"} ago";
+      return "$weeks week${weeks == 1 ? "" : "s"} ago";
     }
     if (days < 365) {
       final months = days ~/ 30;
-      return "${months} month${months == 1 ? "" : "s"} ago";
+      return "$months month${months == 1 ? "" : "s"} ago";
     }
 
     final years = days ~/ 365;
-    return "${years} year${years == 1 ? "" : "s"} ago";
+    return "$years year${years == 1 ? "" : "s"} ago";
   }
+
+  VideoStatus get videoStatus => _videoStatus;
 }

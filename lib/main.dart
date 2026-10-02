@@ -23,9 +23,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  final network = NetworkService();
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -15,14 +15,14 @@ class SearchService {
     int? maxResults,
   }) async {
     final queryParameters = {
-      'q': query,
+      'query': query,
       if (type != null) 'type': type.name,
-      if (maxResults != null) 'maxResults': maxResults.toString(),
+      if (maxResults != null) 'max_results': maxResults.toString(),
     };
 
     final uri = Uri.https(
-      'frameapi-production.up.railway.app',
-      '/api/v1/search',
+      'frame-api-python.fastapicloud.dev',
+      '/search',
       queryParameters,
     );
 
@@ -64,11 +64,11 @@ class SearchService {
   }
 
   Future<Content> searchById(String id) async {
-    final queryParameters = {"id": id};
+    final queryParameters = {'id': id};
 
     final uri = Uri.https(
-      'frameapi-production.up.railway.app',
-      '/api/v1/search',
+      'frame-api-python.fastapicloud.dev',
+      '/search',
       queryParameters,
     );
 
@@ -79,6 +79,7 @@ class SearchService {
         "Search request failed with status ${response.statusCode}",
       );
     }
+
     final decoded = jsonDecode(response.body);
 
     final results = _convertDataIntoModels([decoded]);

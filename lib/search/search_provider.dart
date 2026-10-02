@@ -12,7 +12,7 @@ enum ErrorType { noInternetError, generalError }
 class SearchProvider extends ChangeNotifier {
   final SearchService _searchService = SearchService();
   Content? idSearchResult;
-  SearchStatus _searchType = SearchStatus.notStarted;
+  final SearchStatus _searchType = SearchStatus.notStarted;
   List<Content> _results = [];
   bool _isLoading = false;
   String? _error;

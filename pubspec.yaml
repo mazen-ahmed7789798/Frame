@@ -25,6 +25,7 @@ dependencies:
   async: ^2.13.0
   flutter_web_plugins:
     sdk: flutter
+  gif_view: ^1.0.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,8 +1,8 @@
 import "package:go_router/go_router.dart";
 import 'package:flutter/material.dart';
-import "package:frame/Pages/search_screen.dart";
-import "package:frame/Pages/results_page.dart";
-import "package:frame/Pages/video_player.dart";
+import "package:frame/pages/search_screen.dart";
+import "package:frame/pages/results_page.dart";
+import "package:frame/pages/video_player.dart";
 
 final GoRouter appRouter = GoRouter(
   routes: [
