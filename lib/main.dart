@@ -20,7 +20,6 @@ void main() {
       child: MyApp(),
     ),
   );
-  print("Hello");
 }
 
 class MyApp extends StatelessWidget {

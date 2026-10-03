@@ -80,14 +80,16 @@ class SearchService {
     }
 
     final responseData = jsonDecode(response.body);
-    if (responseData is! Map || responseData['results'] is! List) {
-      throw const FormatException("Search response results are not a list");
+
+    if (responseData is! Map || responseData['result'] is! Map) {
+      throw const FormatException("Search response result is invalid");
     }
 
-    final decoded = responseData['results'] as List;
-    final results = _convertDataIntoModels(
-      decoded.map((item) => Map<String, dynamic>.from(item as Map)).toList(),
-    );
+    final decoded = responseData['result'] as Map;
+
+    final results = _convertDataIntoModels([
+      Map<String, dynamic>.from(decoded),
+    ]);
 
     if (results.isEmpty) {
       throw const FormatException("Content not found");
