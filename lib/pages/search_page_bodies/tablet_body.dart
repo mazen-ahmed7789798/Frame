@@ -100,7 +100,7 @@ class _TabletBodyState extends State<TabletBody> {
                       onSearch: (query) {
                         context.goNamed(
                           "results",
-                          pathParameters: {"q": query},
+                          queryParameters: {"q": query},
                         );
                       },
                     ),
