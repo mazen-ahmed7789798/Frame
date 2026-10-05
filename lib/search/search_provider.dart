@@ -4,10 +4,38 @@ import 'package:flutter/foundation.dart';
 import 'package:frame/models/content_model.dart';
 import 'package:frame/search/search_service.dart';
 import 'package:frame/network/network_status_service.dart';
+import 'package:http/http.dart';
+import 'package:frame/search/response.dart';
 
 enum SearchStatus { loading, hasError, finished, notStarted }
 
 enum ErrorType { noInternetError, generalError }
+
+const _searchUnavailableMessage =
+    'Search is temporarily unavailable. The request to the search API failed.';
+
+String searchErrorMessage(Object error) {
+  if (error is ClientException) {
+    return _searchUnavailableMessage;
+  }
+
+  final text = error.toString();
+  if (text.contains('ClientException') ||
+      text.contains('NetworkError') ||
+      text.contains('Failed to fetch')) {
+    return _searchUnavailableMessage;
+  }
+
+  if (error is FormatException) {
+    return 'Search returned an unexpected response.';
+  }
+
+  if (text.contains('Search request failed')) {
+    return 'Search is temporarily unavailable. Please try again.';
+  }
+
+  return 'Something went wrong while searching.';
+}
 
 class SearchProvider extends ChangeNotifier {
   final SearchService _searchService = SearchService();
@@ -51,13 +79,14 @@ class SearchProvider extends ChangeNotifier {
       return;
     }
     try {
-      _results = await _searchService.searchByWord(
+      final response = await _searchService.searchByWord(
         query,
         type: type,
         maxResults: maxResults,
       );
+      _results = response.data;
     } catch (e) {
-      _error = e.toString();
+      _error = searchErrorMessage(e);
       _errorType = ErrorType.generalError;
     } finally {
       _isLoading = false;
@@ -78,12 +107,11 @@ class SearchProvider extends ChangeNotifier {
       return;
     }
     try {
-      idSearchResult = await _searchService.searchById(id);
-      print('ID: $id');
-      print('RESULT: $idSearchResult');
-      print('TYPE: ${idSearchResult.runtimeType}');
+      final serviceResult = await _searchService.searchById(id);
+      idSearchResult = serviceResult.data;
+      
     } catch (e) {
-      _error = e.toString();
+      _error = searchErrorMessage(e);
       _errorType = ErrorType.generalError;
 
       idSearchResult = null;

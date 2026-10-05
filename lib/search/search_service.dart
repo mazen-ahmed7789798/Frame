@@ -4,12 +4,15 @@ import 'package:frame/models/channel_model.dart';
 import 'package:frame/models/content_model.dart';
 import 'package:frame/models/playlist_model.dart';
 import 'package:frame/models/video_model.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' hide Response;
+import 'package:frame/search/response.dart';
 
 enum SearchType { video, channel, playlist }
 
 class SearchService {
-  Future<List<Content>> searchByWord(
+  final baseUrl = 'https://frame-api-python.fastapicloud.dev';
+  final rootUrl = '/search';
+  Future<Response> searchByWord(
     String query, {
     SearchType? type,
     int? maxResults,
@@ -20,31 +23,34 @@ class SearchService {
       if (maxResults != null) 'max_results': maxResults.toString(),
     };
 
-    final uri = Uri.https(
-      'frame-api-python.fastapicloud.dev',
-      '/search',
-      queryParameters,
-    );
+    final uri = Uri.https(baseUrl, rootUrl, queryParameters);
 
     final response = await get(uri);
 
     if (response.statusCode != 200) {
-      throw Exception(
-        "Search request failed with status ${response.statusCode}",
-      );
+      return Response(
+        message: "Search request failed with status ${response.statusCode}",
+        success: false,
+      ).data;
     }
 
     final decoded = jsonDecode(response.body)['results'];
     if (decoded is! List) {
-      throw const FormatException("Search response is not a list");
+      return Response(
+        message: "Search response is not a list",
+        success: false,
+      ).data;
     }
 
-    return _convertDataIntoModels(
-      decoded.map((item) => Map<String, dynamic>.from(item as Map)).toList(),
+    return Response(
+      data: _convertDataIntoModels(
+        decoded.map((item) => Map<String, dynamic>.from(item as Map)).toList(),
+      ).data,
+      success: true,
     );
   }
 
-  List<Content> _convertDataIntoModels(List<Map<String, dynamic>> jsonData) {
+  Response _convertDataIntoModels(List<Map<String, dynamic>> jsonData) {
     final List<Content> converted = <Content>[];
 
     for (final content in jsonData) {
@@ -59,30 +65,30 @@ class SearchService {
       }
     }
 
-    return converted;
+    return Response(data: converted, success: true).data;
   }
 
-  Future<Content> searchById(String id) async {
+  Future<Response> searchById(String id) async {
     final queryParameters = {'id': id};
 
-    final uri = Uri.https(
-      'frame-api-python.fastapicloud.dev',
-      '/search',
-      queryParameters,
-    );
+    final uri = Uri.https(baseUrl, rootUrl, queryParameters);
 
     final response = await get(uri);
 
     if (response.statusCode != 200) {
-      throw Exception(
-        "Search request failed with status ${response.statusCode}",
-      );
+      return Response(
+        message: "Search request failed with status ${response.statusCode}",
+        success: false,
+      ).data;
     }
 
     final responseData = jsonDecode(response.body);
 
     if (responseData is! Map || responseData['result'] is! Map) {
-      throw const FormatException("Search response result is invalid");
+      return Response(
+        message: "Search response result is invalid",
+        success: false,
+      ).data;
     }
 
     final decoded = responseData['result'] as Map;
@@ -91,10 +97,13 @@ class SearchService {
       Map<String, dynamic>.from(decoded),
     ]);
 
-    if (results.isEmpty) {
-      throw const FormatException("Content not found");
+    if (results.data.isEmpty) {
+      return Response(
+        message: "Content not found",
+        success: false,
+      );
     }
 
-    return results.first;
+    return results;
   }
 }
