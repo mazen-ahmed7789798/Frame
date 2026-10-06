@@ -1,11 +1,7 @@
-class Response {
-  final String? _message;
-  final dynamic _data;
-  final bool? _success;
+class Response_ {
+  final String? message;
+  final dynamic data;
+  final bool success;
 
-  Response({this._message, this._data, this._success});
-
-  String? get message => _message;
-  dynamic get data => _data;
-  bool? get success => _success;
+  const Response_({this.message, this.data, this.success = false});
 }

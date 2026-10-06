@@ -19,7 +19,7 @@ void main() {
     'highThumbnailHeight': 360,
     'highThumbnailWidth': 480,
     'publishedAt': '2026-01-01T00:00:00Z',
-    if (videoStatus != null) 'videoStatus': videoStatus,
+    'videoStatus': ?videoStatus,
   };
 
   test('missing video status defaults to not started', () {

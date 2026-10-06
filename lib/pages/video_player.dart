@@ -43,7 +43,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
     });
   }
 
-  onError(selectedVideo) {
+  Center onError(selectedVideo) {
     print(selectedVideo.videoStatus);
     return Center(
       child: Text(
