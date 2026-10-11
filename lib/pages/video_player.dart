@@ -58,17 +58,14 @@ class _VideoPlayerState extends State<VideoPlayer> {
     Color primary = Theme.of(context).colorScheme.primary;
     double currentWidth = MediaQuery.sizeOf(context).width;
     final provider = context.watch<SearchProvider>();
-    print('provider loading: ${provider.isLoading}');
-    print('provider error: ${provider.error}');
-    print('idSearchResult: ${provider.idSearchResult}');
-    print('is Video: ${provider.idSearchResult is Video}');
+
     final Video? selectedVideo = provider.idSearchResult is Video
         ? provider.idSearchResult as Video
         : null;
 
     return Title(
       title: "Frame - ${selectedVideo?.videoTitle ?? "Video"}",
-      color: const Color(0xFF7EE7C6),
+      color: primary,
 
       child: Scaffold(
         appBar: PreferredSize(

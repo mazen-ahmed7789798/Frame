@@ -42,7 +42,7 @@ class _LoadingDotsState extends State<LoadingDots>
         width: 8,
         height: 8,
         decoration: BoxDecoration(
-          color: Color(0xff7ee7c6),
+          color: Theme.of(context).colorScheme.primary,
           shape: BoxShape.circle,
         ),
       ),

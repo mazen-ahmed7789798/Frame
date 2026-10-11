@@ -26,6 +26,9 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   gif_view: ^1.0.3
+  simple_icons: ^16.23.0
+  supabase_flutter: ^2.18.0
+  lucide_icons: ^0.257.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frame/pages/search_page_bodies/desktop_body.dart';
 import 'package:frame/pages/search_page_bodies/mobile_body.dart';
 import 'package:frame/pages/search_page_bodies/tablet_body.dart';
+import 'package:frame/widgets/app_drawer.dart';
 import 'package:frame/widgets/suggestion_button.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -15,12 +16,18 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late final TextEditingController _controller;
+
   final List<String> _suggestionsText = ["Focus", "Deep Work", "Motivation"];
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   List<SuggestionButton> get suggestionButtons {
     List<SuggestionButton> buttons = [];
+
     for (String x in _suggestionsText) {
       buttons.add(SuggestionButton(suggestionText: x, controller: _controller));
     }
+
     return buttons;
   }
 
@@ -33,6 +40,18 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+
+      appBar: AppBar(
+        foregroundColor: Colors.grey,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+      ),
+
+      drawer: const AppDrawer(),
+
       body: LayoutBuilder(
         builder: (context, constraints) {
           // Mobile حقيقي

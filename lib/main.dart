@@ -1,3 +1,6 @@
+/*
+  -- The main file of Project -- 
+*/
 import "package:flutter/material.dart";
 import 'package:frame/network/network_provider.dart';
 import "package:frame/network/network_status_service.dart";
@@ -6,8 +9,14 @@ import "package:google_fonts/google_fonts.dart";
 import 'package:provider/provider.dart';
 import 'package:frame/search/search_provider.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://uubtdxyzzddpolxyywxj.supabase.co',
+    anonKey: "sb_publishable_3X1i5ZfUkgqvFcdEwKTiKg_CXz8gXUM",
+  );
   usePathUrlStrategy();
   runApp(
     MultiProvider(

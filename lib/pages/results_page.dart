@@ -80,7 +80,7 @@ class _ResultsPageState extends State<ResultsPage> {
       pages.add(SearchResultsPages(_videos.sublist(start, end)));
     }
     return Title(
-      color: const Color(0xFF7EE7C6),
+      color:  primary,
       title: "Frame - Resutls",
       child: Consumer<NetworkProvider>(
         builder: (context, value, child) => Scaffold(

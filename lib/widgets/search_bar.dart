@@ -63,6 +63,7 @@ class _MySearchBarState extends State<MySearchBar> {
           Expanded(
             child: TextField(
               controller: widget.controller,
+              autofocus: true,
               textInputAction: TextInputAction.search,
               maxLines: 1,
               cursorColor: primary,

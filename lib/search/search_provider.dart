@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:frame/models/content_model.dart';
 import 'package:frame/search/search_service.dart';
 import 'package:frame/network/network_status_service.dart';
-import 'package:http/http.dart';
 
 enum SearchStatus { loading, hasError, finished, notStarted }
 
