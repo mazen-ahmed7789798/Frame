@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthService {
   final SupabaseClient _supabaseClient = Supabase.instance.client;
 
-  final String redirectToUrl = 'http://localhost:45523/';
+  final String redirectToUrl = 'https://frame-app-2025.web.app';
 
   Future<AuthResponse> signInWithEmailAndPassword(
     String email,
