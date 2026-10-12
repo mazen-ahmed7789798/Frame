@@ -5,8 +5,8 @@ name: Deploy to Firebase Hosting on tag
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
   build_and_deploy:

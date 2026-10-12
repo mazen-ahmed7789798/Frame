@@ -43,8 +43,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
     });
   }
 
-  Center onError(selectedVideo) {
-    print(selectedVideo.videoStatus);
+  Center onError() {
     return Center(
       child: Text(
         "Video not found",
@@ -64,7 +63,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
         : null;
 
     return Title(
-      title: "Frame - ${selectedVideo?.videoTitle ?? "Video"}",
+      title: selectedVideo?.videoTitle ?? "Frame - Video",
       color: primary,
 
       child: Scaffold(
@@ -114,10 +113,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
             : provider.error != null
             ? ErrorPage(errorType: provider.errorType!, error: provider.error!)
             : selectedVideo == null
-            ? onError(selectedVideo)
+            ? onError()
             : LayoutBuilder(
                 builder: (context, constraints) {
-                  print(selectedVideo.videoStatus);
                   return Column(
                     children: [
                       Padding(

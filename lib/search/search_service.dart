@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:frame/auth/auth_service.dart';
 import 'package:frame/models/channel_model.dart';
 import 'package:frame/models/content_model.dart';
@@ -15,27 +14,8 @@ class SearchService {
   // السيرفر المرفوع (للنشر)
   static const _remoteHost = 'frame-api-python.fastapicloud.dev';
 
-  // السيرفر المحلي (للتطوير)
-  static const _localHost = '127.0.0.1';
-  static const _localPort = 8000;
-
-  final rootUrl = '/search';
+  static const _rootUrl = '/search';
   final authService = AuthService();
-
-  /// في وضع التطوير بيروح للسيرفر المحلي (http)،
-  /// وفي النسخة المنشورة بيروح للسيرفر المرفوع (https).
-  Uri _buildUri(Map<String, String> params) {
-    if (kDebugMode) {
-      return Uri(
-        scheme: 'http',
-        host: _localHost,
-        port: _localPort,
-        path: rootUrl,
-        queryParameters: params,
-      );
-    }
-    return Uri.https(_remoteHost, rootUrl, params);
-  }
 
   Future<Response_> searchByWord(
     String query, {
@@ -49,7 +29,7 @@ class SearchService {
       if (maxResults != null) 'max_results': maxResults.toString(),
     };
 
-    final uri = _buildUri(queryParameters);
+    final uri = Uri.https(_remoteHost, _rootUrl, queryParameters);
 
     final response = await get(
       uri,
@@ -96,8 +76,7 @@ class SearchService {
   }
 
   Future<Response_> searchById(String id) async {
-    final uri = _buildUri({'id': id});
-
+    final uri = Uri.https(_remoteHost, _rootUrl, {'id': id});
     final response = await get(uri);
 
     if (response.statusCode != 200) {

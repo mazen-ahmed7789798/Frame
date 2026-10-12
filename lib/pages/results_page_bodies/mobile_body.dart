@@ -46,7 +46,7 @@ class MobileBody extends StatelessWidget {
         : currentPage.clamp(0, pagesCount - 1);
 
     return Scaffold(
-      backgroundColor: Color(0xff0B0F13),
+      backgroundColor: const Color(0xff0B0F13),
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : provider.error != null && provider.error!.isNotEmpty
@@ -59,29 +59,45 @@ class MobileBody extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                      Flexible(
                         child: Text(
                           '$resultsLength results for',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ),
-                      Text('"$query"', style: TextStyle(color: primary)),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          '"$query"',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: primary),
+                        ),
+                      ),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Expanded(
                     child: pages.isEmpty
                         ? const SizedBox()
                         : pages[safeCurrentPage],
                   ),
                   if (pagesCount > 0)
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xff151c22),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.white12),
+                      ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           NavigationArrowButton(
                             icon: Icons.chevron_left,
@@ -91,17 +107,16 @@ class MobileBody extends StatelessWidget {
                                 ? () => onPageChanged(safeCurrentPage - 1)
                                 : null,
                           ),
-                          for (
-                            int pageIndex = 0;
-                            pageIndex < pagesCount;
-                            pageIndex++
-                          )
-                            NavigationButton(
-                              index: pageIndex,
-                              currentPage: safeCurrentPage,
-                              compact: true,
-                              onPressed: () => onPageChanged(pageIndex),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              'Page ${safeCurrentPage + 1} of $pagesCount',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
                             ),
+                          ),
                           NavigationArrowButton(
                             icon: Icons.chevron_right,
                             tooltip: 'Next page',
