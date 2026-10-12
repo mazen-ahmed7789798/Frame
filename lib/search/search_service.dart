@@ -22,41 +22,54 @@ class SearchService {
     SearchType? type,
     int? maxResults,
   }) async {
-    final token = authService.getCurrentUserAccessToken();
-    final queryParameters = {
-      'query': query,
-      if (type != null) 'type': type.name,
-      if (maxResults != null) 'max_results': maxResults.toString(),
-    };
+    final stopwatch = Stopwatch()..start();
 
-    final uri = Uri.https(_remoteHost, _rootUrl, queryParameters);
+    try {
+      final token = authService.getCurrentUserAccessToken();
 
-    final response = await get(
-      uri,
-      headers: {if (token != null) 'Authorization': 'Bearer $token'},
-    );
+      final queryParameters = {
+        'query': query,
+        if (type != null) 'type': type.name,
+        if (maxResults != null) 'max_results': maxResults.toString(),
+      };
 
-    if (response.statusCode != 200) {
+      final uri = Uri.https(_remoteHost, _rootUrl, queryParameters);
+
+      final response = await get(
+        uri,
+        headers: {if (token != null) 'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode != 200) {
+        return Response_(
+          message: "Search request failed with status ${response.statusCode}",
+          success: false,
+        );
+      }
+
+      final decoded = jsonDecode(response.body)['results'];
+
+      if (decoded is! List) {
+        return Response_(
+          message: "Search response is not a list",
+          success: false,
+        );
+      }
+
       return Response_(
-        message: "Search request failed with status ${response.statusCode}",
-        success: false,
+        data: _convertDataIntoModels(
+          decoded
+              .map((item) => Map<String, dynamic>.from(item as Map))
+              .toList(),
+        ),
+        success: true,
+      );
+    } finally {
+      stopwatch.stop();
+      print(
+        '[Search Flutter] query="$query", duration=${stopwatch.elapsedMilliseconds} ms',
       );
     }
-
-    final decoded = jsonDecode(response.body)['results'];
-    if (decoded is! List) {
-      return Response_(
-        message: "Search response is not a list",
-        success: false,
-      );
-    }
-
-    return Response_(
-      data: _convertDataIntoModels(
-        decoded.map((item) => Map<String, dynamic>.from(item as Map)).toList(),
-      ),
-      success: true,
-    );
   }
 
   List<Content> _convertDataIntoModels(List<Map<String, dynamic>> jsonData) {
