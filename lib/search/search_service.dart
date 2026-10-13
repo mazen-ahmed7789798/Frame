@@ -5,16 +5,16 @@ import 'package:frame/models/channel_model.dart';
 import 'package:frame/models/content_model.dart';
 import 'package:frame/models/playlist_model.dart';
 import 'package:frame/models/video_model.dart';
-import 'package:http/http.dart';
 import 'package:frame/search/response.dart';
+import 'package:http/http.dart';
 
 enum SearchType { video, channel, playlist }
 
 class SearchService {
   // السيرفر المرفوع (للنشر)
   static const _remoteHost = 'frame-api-python.fastapicloud.dev';
-
   static const _rootUrl = '/search';
+
   final authService = AuthService();
 
   Future<Response_> searchByWord(
@@ -23,6 +23,8 @@ class SearchService {
     int? maxResults,
   }) async {
     final stopwatch = Stopwatch()..start();
+
+    print('[Search Flutter] Started: query="$query"');
 
     try {
       final token = authService.getCurrentUserAccessToken();
@@ -42,40 +44,49 @@ class SearchService {
 
       if (response.statusCode != 200) {
         return Response_(
-          message: "Search request failed with status ${response.statusCode}",
+          message: 'Search request failed with status ${response.statusCode}',
           success: false,
         );
       }
 
-      final decoded = jsonDecode(response.body)['results'];
+      final responseBody = jsonDecode(response.body);
 
-      if (decoded is! List) {
+      if (responseBody is! Map || responseBody['results'] is! List) {
         return Response_(
-          message: "Search response is not a list",
+          message: 'Search response is not a list',
           success: false,
         );
       }
 
-      return Response_(
-        data: _convertDataIntoModels(
-          decoded
-              .map((item) => Map<String, dynamic>.from(item as Map))
-              .toList(),
-        ),
-        success: true,
+      final decoded = responseBody['results'] as List;
+
+      final results = _convertDataIntoModels(
+        decoded.map((item) => Map<String, dynamic>.from(item as Map)).toList(),
       );
+
+      return Response_(data: results, success: true);
+    } catch (error, stackTrace) {
+      print('[Search Flutter] Error: $error');
+      print(stackTrace);
+
+      return Response_(message: 'Search failed: $error', success: false);
     } finally {
       stopwatch.stop();
+
       print(
-        '[Search Flutter] query="$query", duration=${stopwatch.elapsedMilliseconds} ms',
+        '[Search Flutter] Finished: '
+        'query="$query", '
+        'duration=${stopwatch.elapsedMilliseconds} ms',
       );
     }
   }
 
   List<Content> _convertDataIntoModels(List<Map<String, dynamic>> jsonData) {
     final List<Content> converted = <Content>[];
+
     for (final content in jsonData) {
-      final kind = content["kind"];
+      final kind = content['kind'];
+
       if (kind == 'youtube#video') {
         converted.add(Video.fromJson(content));
       } else if (kind == 'youtube#playlist') {
@@ -89,33 +100,52 @@ class SearchService {
   }
 
   Future<Response_> searchById(String id) async {
-    final uri = Uri.https(_remoteHost, _rootUrl, {'id': id});
-    final response = await get(uri);
+    final stopwatch = Stopwatch()..start();
 
-    if (response.statusCode != 200) {
-      return Response_(
-        message: "Search request failed with status ${response.statusCode}",
-        success: false,
+    print('[Search Flutter] Started: id="$id"');
+
+    try {
+      final uri = Uri.https(_remoteHost, _rootUrl, {'id': id});
+      final response = await get(uri);
+
+      if (response.statusCode != 200) {
+        return Response_(
+          message: 'Search request failed with status ${response.statusCode}',
+          success: false,
+        );
+      }
+
+      final responseData = jsonDecode(response.body);
+
+      if (responseData is! Map || responseData['result'] is! Map) {
+        return Response_(
+          message: 'Search response result is invalid',
+          success: false,
+        );
+      }
+
+      final decoded = Map<String, dynamic>.from(responseData['result'] as Map);
+
+      final results = _convertDataIntoModels([decoded]);
+
+      if (results.isEmpty) {
+        return Response_(message: 'Content not found', success: false);
+      }
+
+      return Response_(data: results.first, success: true);
+    } catch (error, stackTrace) {
+      print('[Search Flutter] Error: $error');
+      print(stackTrace);
+
+      return Response_(message: 'Search failed: $error', success: false);
+    } finally {
+      stopwatch.stop();
+
+      print(
+        '[Search Flutter] Finished: '
+        'id="$id", '
+        'duration=${stopwatch.elapsedMilliseconds} ms',
       );
     }
-
-    final responseData = jsonDecode(response.body);
-
-    if (responseData is! Map || responseData['result'] is! Map) {
-      return Response_(
-        message: "Search response result is invalid",
-        success: false,
-      );
-    }
-
-    final decoded = Map<String, dynamic>.from(responseData['result'] as Map);
-
-    final results = _convertDataIntoModels([decoded]);
-
-    if (results.isEmpty) {
-      return Response_(message: "Content not found", success: false);
-    }
-
-    return Response_(data: results.first, success: true);
   }
 }
