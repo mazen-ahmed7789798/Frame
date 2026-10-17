@@ -66,9 +66,13 @@ class AppDrawer extends StatelessWidget {
                     color: const Color(0xff151A20),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
                     child: SizedBox(
                       width: double.infinity,
+                      height: 32,
                       child: StreamBuilder<AuthState>(
                         stream: Supabase.instance.client.auth.onAuthStateChange,
                         initialData: AuthState(

@@ -3,6 +3,7 @@ import 'package:frame/models/video_model.dart';
 import 'package:frame/pages/error_page.dart';
 import 'package:frame/network/network_provider.dart';
 import 'package:frame/search/search_provider.dart';
+import 'package:frame/widgets/youtube_player.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -18,7 +19,6 @@ class VideoPlayer extends StatefulWidget {
 
 class _VideoPlayerState extends State<VideoPlayer> {
   late final YoutubePlayerController youtubePlayerController;
-  late final YoutubePlayer youtubePlayer;
   @override
   void initState() {
     super.initState();
@@ -32,7 +32,6 @@ class _VideoPlayerState extends State<VideoPlayer> {
         color: "green",
       ),
     );
-    youtubePlayer = YoutubePlayer(controller: youtubePlayerController);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       if (context.read<NetworkProvider>().hasInternet == true) {
@@ -145,7 +144,13 @@ class _VideoPlayerState extends State<VideoPlayer> {
                                   aspectRatio: 16 / 9,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
-                                    child: youtubePlayer,
+                                    child: MyYoutubePlayer(
+                                      video:
+                                          context
+                                                  .watch<SearchProvider>()
+                                                  .idSearchResult
+                                              as Video,
+                                    ),
                                   ),
                                 ),
                               ),

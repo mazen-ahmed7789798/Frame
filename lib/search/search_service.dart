@@ -22,10 +22,6 @@ class SearchService {
     SearchType? type,
     int? maxResults,
   }) async {
-    final stopwatch = Stopwatch()..start();
-
-    print('[Search Flutter] Started: query="$query"');
-
     try {
       final token = authService.getCurrentUserAccessToken();
 
@@ -59,25 +55,14 @@ class SearchService {
       }
 
       final decoded = responseBody['results'] as List;
-
+    
       final results = _convertDataIntoModels(
         decoded.map((item) => Map<String, dynamic>.from(item as Map)).toList(),
       );
 
       return Response_(data: results, success: true);
-    } catch (error, stackTrace) {
-      print('[Search Flutter] Error: $error');
-      print(stackTrace);
-
+    } catch (error) {
       return Response_(message: 'Search failed: $error', success: false);
-    } finally {
-      stopwatch.stop();
-
-      print(
-        '[Search Flutter] Finished: '
-        'query="$query", '
-        'duration=${stopwatch.elapsedMilliseconds} ms',
-      );
     }
   }
 
@@ -102,11 +87,13 @@ class SearchService {
   Future<Response_> searchById(String id) async {
     final stopwatch = Stopwatch()..start();
 
-    print('[Search Flutter] Started: id="$id"');
-
     try {
+      final token = authService.getCurrentUserAccessToken();
       final uri = Uri.https(_remoteHost, _rootUrl, {'id': id});
-      final response = await get(uri);
+      final response = await get(
+        uri,
+        headers: {if (token != null) 'Authorization': "Bearer $token"},
+      );
 
       if (response.statusCode != 200) {
         return Response_(
@@ -125,7 +112,6 @@ class SearchService {
       }
 
       final decoded = Map<String, dynamic>.from(responseData['result'] as Map);
-
       final results = _convertDataIntoModels([decoded]);
 
       if (results.isEmpty) {
@@ -133,19 +119,10 @@ class SearchService {
       }
 
       return Response_(data: results.first, success: true);
-    } catch (error, stackTrace) {
-      print('[Search Flutter] Error: $error');
-      print(stackTrace);
-
+    } catch (error) {
       return Response_(message: 'Search failed: $error', success: false);
     } finally {
       stopwatch.stop();
-
-      print(
-        '[Search Flutter] Finished: '
-        'id="$id", '
-        'duration=${stopwatch.elapsedMilliseconds} ms',
-      );
     }
   }
 }

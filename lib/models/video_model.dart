@@ -8,7 +8,7 @@ class Video implements Content {
   late dynamic _vidoeDuration;
 
   late String _description;
-  late VideoStatus _videoStatus = VideoStatus.notStarted;
+  late final VideoStatus _videoStatus = VideoStatus.notStarted;
 
   late int _defaultThumbnailwidth;
   late int _defaultThumbnailHeight;
@@ -41,7 +41,7 @@ class Video implements Content {
 
   @override
   late String _contentTitle;
-
+  late double position = 0;
   Video(
     this._channelTitle,
     this._contentId,
@@ -58,9 +58,9 @@ class Video implements Content {
     this._highThumbnail,
     this._highThumbnailHeight,
     this._highThumbnailWidth,
-    this._publishedAt,
-    this._videoStatus,
-  );
+    this._publishedAt, {
+    this.position = 0,
+  });
 
   @override
   Map<String, dynamic> toMap() {
@@ -82,19 +82,11 @@ class Video implements Content {
       "defaultThumbnailWidth": _defaultThumbnailwidth,
       "description": _description,
       "videoStatus": _videoStatus.toString(),
+      "videoPosition": position,
     };
   }
 
   factory Video.fromJson(Map<String, dynamic> json) {
-    final status = json["videoStatus"];
-    final videoStatus = status == null
-        ? VideoStatus.notStarted
-        : VideoStatus.values.firstWhere(
-            (value) => value.toString() == status,
-            orElse: () =>
-                throw FormatException("Unknown video status: $status"),
-          );
-
     return Video(
       json["channelTitle"],
       json["id"],
@@ -112,7 +104,7 @@ class Video implements Content {
       json["highThumbnailHeight"],
       json["highThumbnailWidth"],
       DateTime.parse(json["publishedAt"]),
-      videoStatus ?? VideoStatus.notStarted,
+      position: json['video_progress'] ?? 0,
     );
   }
 
